@@ -302,8 +302,19 @@ void WatchScreen::set_speed()
 const char *WatchScreen::get_network()
 {
     void *returned_data;
+	bool ok;
 
-    bool ok = PublicData::get_value( network_checksum, get_ip_checksum, &returned_data );
+	ok = PublicData::get_value( network_checksum, get_link_up_checksum, &returned_data );
+    if (ok) {
+		bool *up = (bool *)returned_data;
+		if (!up) {
+			free(returned_data);
+			return NULL;         // Don't show the IP address if the link isn't up
+		}
+		free(returned_data);
+	}
+
+    ok = PublicData::get_value( network_checksum, get_ip_checksum, &returned_data );
     if (ok) {
         uint8_t *ipaddr = (uint8_t *)returned_data;
         char buf[20];

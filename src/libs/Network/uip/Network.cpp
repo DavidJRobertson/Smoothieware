@@ -221,6 +221,14 @@ void Network::on_get_public_data(void* argument) {
         str[n1+n2+n3+n4]= '\0';
         pdr->set_data_ptr(str);
         pdr->set_taken();
+        
+    }else if(pdr->second_element_is(get_link_up_checksum)) {
+        // NOTE caller must free the returned bool when done
+        bool up = ethernet->isUp();
+        bool *isup = (bool *)malloc(sizeof(bool));
+        memcpy(&up, isup, sizeof(bool));
+        pdr->set_data_ptr(isup);
+        pdr->set_taken();
     }
 }
 
